@@ -5,10 +5,11 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Gradle
+name: Gradle CI
 
 on:
-  workflow_dispatch
+  pull_request:
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -34,25 +35,8 @@ jobs:
       - name: Build ARM with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: dockerClean docker -PplatformName=arm
+          arguments: printVersion dockerClean docker -PplatformName=arm
       - name: Build ARM64 with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: dockerClean docker -PplatformName=arm64
-      - name: Docker Login
-        uses: docker/login-action@6af3c118c8376c675363897acf1757f7a9be6583 # tag=v1.13.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Tag using Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        with:
-          arguments: tagVersion -PgithubUser=${{ secrets.PUBLISH_USER_NAME }} -PgithubToken=${{ secrets.PUBLISH_KEY }}
-      - name: Publish ARM with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        with:
-          arguments: dockerClean dockerPushDockerNagyesta -PplatformName=arm
-      - name: Publish ARM64 with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        with:
-          arguments: dockerClean dockerPushDockerNagyesta -PplatformName=arm64
+          arguments: printVersion dockerClean docker -PplatformName=arm64

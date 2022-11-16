@@ -1,13 +1,16 @@
 plugins {
     id 'java'
     id 'com.palantir.docker' version '0.34.0'
+    id "io.toolebox.git-versioner" version "1.6.7"
 }
 
 group = 'com.github.nagyesta'
-version = libs.versions.lowkeyVault.get()
 sourceCompatibility = '11'
 
 project.ext {
+    gitUser = project.hasProperty('githubUser') ? (project.property('githubUser') as String) : ''
+    gitToken = project.hasProperty('githubToken') ? (project.property('githubToken') as String) : ''
+    platformName = project.hasProperty('platformName') ? (project.property('platformName') as String) : 'arm64'
     repoUrl = 'https://github.com/nagyesta/lowkey-vault'
     licenseName = 'MIT License'
     licenseUrl = 'https://raw.githubusercontent.com/nagyesta/lowkey-vault/main/LICENSE'
@@ -16,7 +19,34 @@ project.ext {
     maintainerUrl = 'https://github.com/nagyesta/'
     scmConnection = 'scm:git:https://github.com/nagyesta/lowkey-vault.git'
     scmProjectUrl = 'https://github.com/nagyesta/lowkey-vault/'
-    platformName = project.hasProperty('platformName') ? (project.property('platformName') as String) : 'arm64'
+}
+
+versioner {
+    startFrom {
+        major = 0
+        minor = 0
+        patch = 1
+    }
+    match {
+        major = '{major}'
+        minor = '{minor}'
+        patch = '{patch}'
+    }
+    pattern {
+        //force using the version from the Lowkey Vault jar
+        pattern = libs.versions.lowkeyVault.get()
+    }
+    git {
+        authentication {
+            https {
+                token = project.ext.gitToken
+            }
+        }
+    }
+    tag {
+        prefix = 'v'
+        useCommitMessage = true
+    }
 }
 
 repositories {
