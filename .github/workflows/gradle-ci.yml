@@ -33,10 +33,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Build ARM with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
         with:
           arguments: printVersion dockerClean docker -PplatformName=arm
       - name: Build ARM64 with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
         with:
           arguments: printVersion dockerClean docker -PplatformName=arm64
