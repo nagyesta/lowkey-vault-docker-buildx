@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3
       - name: Set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc # v3
         with:
           java-version: '11'
           distribution: 'temurin'
@@ -31,7 +31,7 @@ jobs:
         name: Set up QEMU
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # v2
       - name: Build ARM with Gradle
         uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
         with:
