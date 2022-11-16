@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id 'com.palantir.docker' version '0.34.0'
+}
+
+group = 'com.github.nagyesta'
+version = libs.versions.lowkeyVault.get()
+sourceCompatibility = '11'
+
+project.ext {
+    repoUrl = 'https://github.com/nagyesta/lowkey-vault'
+    licenseName = 'MIT License'
+    licenseUrl = 'https://raw.githubusercontent.com/nagyesta/lowkey-vault/main/LICENSE'
+    maintainerId = 'nagyesta'
+    maintainerName = 'Istvan Zoltan Nagy'
+    maintainerUrl = 'https://github.com/nagyesta/'
+    scmConnection = 'scm:git:https://github.com/nagyesta/lowkey-vault.git'
+    scmProjectUrl = 'https://github.com/nagyesta/lowkey-vault/'
+    platformName = project.hasProperty('platformName') ? (project.property('platformName') as String) : 'arm64'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    lowkey
+}
+
+dependencies {
+    lowkey libs.lowkey.vault.app
+}
+
+task copyAppJar(type: Copy) {
+    inputs.file(configurations.lowkey.asFileTree.singleFile)
+    outputs.file("${buildDir}/app/lowkey-vault.jar")
+    from configurations.lowkey.asFileTree.singleFile
+    into file("${buildDir}/app/")
+    rename {
+        'lowkey-vault.jar'
+    }
+    dependsOn(":build")
+}
+
+docker {
+    name "lowkey-vault-experiment:${libs.versions.lowkeyVault.get()}-${platformName}"
+    tag 'dockerNagyesta', "nagyesta/lowkey-vault-experiment:${libs.versions.lowkeyVault.get()}-${project.platformName}"
+    dockerfile file("src/docker/${project.platformName}.df")
+    files file("${buildDir}/app/lowkey-vault.jar")
+    pull true
+    noCache true
+    buildx true
+    platform "linux/${project.platformName}"
+}
+tasks.dockerPrepare.inputs.file("${buildDir}/app/lowkey-vault.jar")
+tasks.dockerPrepare.dependsOn copyAppJar
+clean.mustRunAfter dockerClean
