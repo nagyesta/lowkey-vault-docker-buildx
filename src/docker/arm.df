@@ -1,0 +1,7 @@
+FROM eclipse-temurin:11.0.17_8-jre@sha256:a1aee341b0380d40039b0c4be25d45fb7a49159253bd51c72d8863f2af265edc
+LABEL maintainer="nagyesta@gmail.com"
+EXPOSE 8443:8443
+ADD lowkey-vault.jar /lowkey-vault.jar
+RUN mkdir "/import"
+CMD [ "sh", "-c", "ls /" ]
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /lowkey-vault.jar ${LOWKEY_ARGS}"]
