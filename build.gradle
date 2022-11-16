@@ -73,8 +73,8 @@ task copyAppJar(type: Copy) {
 }
 
 docker {
-    name "lowkey-vault-experiment:${libs.versions.lowkeyVault.get()}-${platformName}"
-    tag 'dockerNagyesta', "nagyesta/lowkey-vault-experiment:${libs.versions.lowkeyVault.get()}-${project.platformName}"
+    name "lowkey-vault:${libs.versions.lowkeyVault.get()}-${platformName}"
+    tag 'dockerNagyesta', "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-${project.platformName}"
     dockerfile file("src/docker/${project.platformName}.df")
     files file("${buildDir}/app/lowkey-vault.jar")
     pull true
