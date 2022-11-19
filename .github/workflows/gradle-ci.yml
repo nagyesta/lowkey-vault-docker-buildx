@@ -32,11 +32,7 @@ jobs:
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # v2
-      - name: Build ARM with Gradle
+      - name: Build with Gradle
         uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
         with:
-          arguments: printVersion dockerClean docker -PplatformName=arm
-      - name: Build ARM64 with Gradle
-        uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
-        with:
-          arguments: printVersion dockerClean docker -PplatformName=arm64
+          arguments: printVersion clean buildDocker

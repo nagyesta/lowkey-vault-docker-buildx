@@ -8,7 +8,7 @@
   ],
   "assigneesSampleSize": 1,
   "docker": {
-    "pinDigests": true
+    "pinDigests": false
   },
   "github-actions": {
     "pinDigests": true

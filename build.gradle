@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'com.palantir.docker' version '0.34.0'
     id "io.toolebox.git-versioner" version "1.6.7"
 }
 
@@ -10,15 +9,12 @@ sourceCompatibility = '11'
 project.ext {
     gitUser = project.hasProperty('githubUser') ? (project.property('githubUser') as String) : ''
     gitToken = project.hasProperty('githubToken') ? (project.property('githubToken') as String) : ''
-    platformName = project.hasProperty('platformName') ? (project.property('platformName') as String) : 'arm64'
-    repoUrl = 'https://github.com/nagyesta/lowkey-vault'
+    repoUrl = 'https://github.com/nagyesta/lowkey-vault-docker-buildx'
     licenseName = 'MIT License'
-    licenseUrl = 'https://raw.githubusercontent.com/nagyesta/lowkey-vault/main/LICENSE'
+    licenseUrl = 'https://raw.githubusercontent.com/nagyesta/lowkey-vault-docker-buildx/main/LICENSE'
     maintainerId = 'nagyesta'
     maintainerName = 'Istvan Zoltan Nagy'
     maintainerUrl = 'https://github.com/nagyesta/'
-    scmConnection = 'scm:git:https://github.com/nagyesta/lowkey-vault.git'
-    scmProjectUrl = 'https://github.com/nagyesta/lowkey-vault/'
 }
 
 versioner {
@@ -61,27 +57,64 @@ dependencies {
     lowkey libs.lowkey.vault.app
 }
 
-task copyAppJar(type: Copy) {
-    inputs.file(configurations.lowkey.asFileTree.singleFile)
-    outputs.file("${buildDir}/app/lowkey-vault.jar")
-    from configurations.lowkey.asFileTree.singleFile
-    into file("${buildDir}/app/")
+task copyDockerfile(type: Copy) {
+    inputs.file("src/docker/Dockerfile")
+    outputs.file("${buildDir}/docker/Dockerfile")
+    from file("src/docker/Dockerfile")
+    into file("${buildDir}/docker/")
     rename {
-        'lowkey-vault.jar'
+        'Dockerfile'
     }
     dependsOn(":build")
 }
 
-docker {
-    name "lowkey-vault:${libs.versions.lowkeyVault.get()}-${platformName}"
-    tag 'dockerNagyesta', "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-${project.platformName}"
-    dockerfile file("src/docker/${project.platformName}.df")
-    files file("${buildDir}/app/lowkey-vault.jar")
-    pull true
-    noCache true
-    buildx true
-    platform "linux/${project.platformName}"
+task prepareDocker(type: Copy) {
+    inputs.file(configurations.lowkey.asFileTree.singleFile)
+    outputs.file("${buildDir}/docker/lowkey-vault.jar")
+    from configurations.lowkey.asFileTree.singleFile
+    into file("${buildDir}/docker/")
+    rename {
+        'lowkey-vault.jar'
+    }
+    dependsOn(":copyDockerfile")
 }
-tasks.dockerPrepare.inputs.file("${buildDir}/app/lowkey-vault.jar")
-tasks.dockerPrepare.dependsOn copyAppJar
-clean.mustRunAfter dockerClean
+
+task createDockerBuildx(type: Exec) {
+    workingDir "${buildDir}/docker/"
+
+    commandLine "docker", "buildx", "create", "--use"
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+    dependsOn(":prepareDocker")
+}
+
+task buildDocker(type: Exec) {
+    inputs.dir("${buildDir}/docker/")
+    workingDir "${buildDir}/docker/"
+
+    commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64,linux/arm/v7",
+            "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-jammy", "."
+
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+    dependsOn(":createDockerBuildx")
+}
+
+task buildDockerPush(type: Exec) {
+    inputs.dir("${buildDir}/docker/")
+    workingDir "${buildDir}/docker/"
+
+    commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64,linux/arm/v7",
+            "--push", "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-jammy", "."
+
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
