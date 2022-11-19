@@ -8,7 +8,12 @@
 name: Gradle
 
 on:
-  workflow_dispatch
+  push:
+    branches: [ main ]
+    paths:
+      - 'gradle/libs.versions.toml'
+  workflow_dispatch:
+
 
 permissions:
   contents: read
@@ -31,28 +36,16 @@ jobs:
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # v2
-      - name: Build ARM with Gradle
+      - name: Build with Gradle
         uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
         with:
-          arguments: dockerClean docker -PplatformName=arm
-      - name: Build ARM64 with Gradle
-        uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
-        with:
-          arguments: dockerClean docker -PplatformName=arm64
+          arguments: clean buildDocker
       - name: Docker Login
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Tag using Gradle
+      - name: Tag and publish using Gradle
         uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
         with:
-          arguments: tagVersion -PgithubUser=${{ secrets.PUBLISH_USER_NAME }} -PgithubToken=${{ secrets.PUBLISH_KEY }}
-      - name: Publish ARM with Gradle
-        uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
-        with:
-          arguments: dockerClean dockerPushDockerNagyesta -PplatformName=arm
-      - name: Publish ARM64 with Gradle
-        uses: gradle/gradle-build-action@e4ca0fdab0cf8e217cd67657b0ffcbf6392b486b
-        with:
-          arguments: dockerClean dockerPushDockerNagyesta -PplatformName=arm64
+          arguments: tagVersion buildDockerPush -PgithubUser=${{ secrets.PUBLISH_USER_NAME }} -PgithubToken=${{ secrets.PUBLISH_KEY }}
