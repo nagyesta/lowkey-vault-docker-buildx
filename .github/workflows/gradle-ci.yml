@@ -33,6 +33,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # v2
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@7b3886699e7f5156c2650e6861b32ea2356df4d6
+        uses: gradle/gradle-build-action@a8cfaf666b099d20c88ad57a2d95d328ada243b6
         with:
           arguments: printVersion clean buildDocker
