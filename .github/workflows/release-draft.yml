@@ -1,0 +1,21 @@
+name: CreateRelease
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    name: Draft release action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0 # tag=v6.3.3
+        with:
+          script: |
+            github.rest.repos.createRelease({
+              owner: "${{ github.repository_owner }}",
+              repo: "lowkey-vault-docker-buildx",
+              tag_name: "${{ github.ref_name }}",
+              generate_release_notes: true,
+              draft: true
+            });
