@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11.0.17_8-jre-jammy
+FROM eclipse-temurin:11.0.18_10-jre-jammy
 LABEL maintainer="nagyesta@gmail.com"
 EXPOSE 8443:8443
 ADD lowkey-vault.jar /lowkey-vault.jar
