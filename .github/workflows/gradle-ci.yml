@@ -29,7 +29,7 @@ jobs:
       - # Add support for more platforms with QEMU (optional)
         # https://github.com/docker/setup-qemu-action
         name: Set up QEMU
-        uses: docker/setup-qemu-action@12d39e1bb9d7a0e024b9de8b339a19115b2950fb
+        uses: docker/setup-qemu-action@de3982d68a2f2681e93db37727a85fb7f32ea313
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f03ac48505955848960e80bbb68046aa35c7b9e7 # v2
       - name: Build with Gradle
