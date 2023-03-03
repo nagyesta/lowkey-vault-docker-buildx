@@ -10,6 +10,10 @@ name: Gradle CI
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'gradle/libs.versions.toml'
 
 permissions:
   contents: read
