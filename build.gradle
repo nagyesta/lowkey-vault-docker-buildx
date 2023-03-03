@@ -54,10 +54,11 @@ configurations {
 }
 
 dependencies {
+    //noinspection DependencyNotationArgument
     lowkey libs.lowkey.vault.app
 }
 
-task copyDockerfile(type: Copy) {
+tasks.register('copyDockerfile', Copy) {
     inputs.file("src/docker/Dockerfile")
     outputs.file("${buildDir}/docker/Dockerfile")
     from file("src/docker/Dockerfile")
@@ -68,7 +69,7 @@ task copyDockerfile(type: Copy) {
     dependsOn(":build")
 }
 
-task prepareDocker(type: Copy) {
+tasks.register('prepareDocker', Copy) {
     inputs.file(configurations.lowkey.asFileTree.singleFile)
     outputs.file("${buildDir}/docker/lowkey-vault.jar")
     from configurations.lowkey.asFileTree.singleFile
@@ -79,7 +80,7 @@ task prepareDocker(type: Copy) {
     dependsOn(":copyDockerfile")
 }
 
-task createDockerBuildx(type: Exec) {
+tasks.register('createDockerBuildx', Exec) {
     workingDir "${buildDir}/docker/"
 
     commandLine "docker", "buildx", "create", "--use"
@@ -92,12 +93,12 @@ task createDockerBuildx(type: Exec) {
     dependsOn(":prepareDocker")
 }
 
-task buildDocker(type: Exec) {
+tasks.register('buildDocker', Exec) {
     inputs.dir("${buildDir}/docker/")
     workingDir "${buildDir}/docker/"
 
     commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64,linux/arm/v7",
-            "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-jammy", "."
+            "--pull", "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-jammy", "."
 
     standardOutput = new ByteArrayOutputStream()
     ext.output = {
@@ -106,7 +107,7 @@ task buildDocker(type: Exec) {
     dependsOn(":createDockerBuildx")
 }
 
-task buildDockerPush(type: Exec) {
+tasks.register('buildDockerPush', Exec) {
     inputs.dir("${buildDir}/docker/")
     workingDir "${buildDir}/docker/"
 
