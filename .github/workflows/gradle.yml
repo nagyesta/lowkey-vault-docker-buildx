@@ -37,7 +37,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c # v2
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@55d241b8a2354d0acc9b01f5e8080df594346d7e
+        uses: gradle/gradle-build-action@12681a2972f22b7ae149f045fca9f1c83a53458d
         with:
           arguments: clean buildDocker
       - name: Docker Login
@@ -46,6 +46,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Tag and publish using Gradle
-        uses: gradle/gradle-build-action@55d241b8a2354d0acc9b01f5e8080df594346d7e
+        uses: gradle/gradle-build-action@12681a2972f22b7ae149f045fca9f1c83a53458d
         with:
           arguments: tagVersion buildDockerPush -PgithubUser=${{ secrets.PUBLISH_USER_NAME }} -PgithubToken=${{ secrets.PUBLISH_KEY }}
