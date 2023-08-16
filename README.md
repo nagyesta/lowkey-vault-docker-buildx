@@ -12,4 +12,3 @@ This is an auxiliary project for [Lowkey Vault](https://github.com/nagyesta/lowk
 different architectures.
 
 Please refer to the [Lowkey Vault](https://github.com/nagyesta/lowkey-vault) project for usage.
-

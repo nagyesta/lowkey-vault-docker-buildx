@@ -4,7 +4,6 @@ plugins {
 }
 
 group = 'com.github.nagyesta'
-sourceCompatibility = '11'
 
 project.ext {
     gitUser = project.hasProperty('githubUser') ? (project.property('githubUser') as String) : ''
@@ -56,6 +55,10 @@ configurations {
 dependencies {
     //noinspection DependencyNotationArgument
     lowkey libs.lowkey.vault.app
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.register('copyDockerfile', Copy) {
