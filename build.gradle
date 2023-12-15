@@ -61,30 +61,30 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.register('copyDockerfile', Copy) {
+tasks.register("copyDockerfile", Copy) {
     inputs.file("src/docker/Dockerfile")
-    outputs.file("${buildDir}/docker/Dockerfile")
+    outputs.file(layout.buildDirectory.file("docker/Dockerfile").get().asFile)
     from file("src/docker/Dockerfile")
-    into file("${buildDir}/docker/")
+    into layout.buildDirectory.dir("docker").get().asFile
     rename {
-        'Dockerfile'
+        "Dockerfile"
     }
     dependsOn(":build")
 }
 
-tasks.register('prepareDocker', Copy) {
+tasks.register("prepareDocker", Copy) {
     inputs.file(configurations.lowkey.asFileTree.singleFile)
-    outputs.file("${buildDir}/docker/lowkey-vault.jar")
+    outputs.file(layout.buildDirectory.file("docker/lowkey-vault.jar").get().asFile)
     from configurations.lowkey.asFileTree.singleFile
-    into file("${buildDir}/docker/")
+    into layout.buildDirectory.dir("docker").get().asFile
     rename {
-        'lowkey-vault.jar'
+        "lowkey-vault.jar"
     }
     dependsOn(":copyDockerfile")
 }
 
 tasks.register('createDockerBuildx', Exec) {
-    workingDir "${buildDir}/docker/"
+    workingDir layout.buildDirectory.dir("docker").get().asFile
 
     commandLine "docker", "buildx", "create", "--use"
 
@@ -96,12 +96,12 @@ tasks.register('createDockerBuildx', Exec) {
     dependsOn(":prepareDocker")
 }
 
-tasks.register('buildDocker', Exec) {
-    inputs.dir("${buildDir}/docker/")
-    workingDir "${buildDir}/docker/"
+tasks.register("buildDocker", Exec) {
+    inputs.dir(layout.buildDirectory.dir("docker").get().asFile)
+    workingDir layout.buildDirectory.dir("docker").get().asFile
 
-    commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64,linux/arm/v7",
-            "--pull", "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-jammy", "."
+    commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64",
+            "--pull", "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-ubi9-minimal", "."
 
     standardOutput = new ByteArrayOutputStream()
     ext.output = {
@@ -110,12 +110,12 @@ tasks.register('buildDocker', Exec) {
     dependsOn(":createDockerBuildx")
 }
 
-tasks.register('buildDockerPush', Exec) {
-    inputs.dir("${buildDir}/docker/")
-    workingDir "${buildDir}/docker/"
+tasks.register("buildDockerPush", Exec) {
+    inputs.dir(layout.buildDirectory.dir("docker").get().asFile)
+    workingDir layout.buildDirectory.dir("docker").get().asFile
 
-    commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64,linux/arm/v7",
-            "--push", "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-jammy", "."
+    commandLine "docker", "buildx", "build", "--platform", "linux/arm64,linux/amd64",
+            "--push", "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-ubi9-minimal", "."
 
     standardOutput = new ByteArrayOutputStream()
     ext.output = {
