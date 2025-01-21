@@ -1,7 +1,8 @@
 ![LowkeyVault](https://raw.githubusercontent.com/nagyesta/lowkey-vault/main/.github/assets/LowkeyVault-logo-full.png)
 
 [![GitHub license](https://img.shields.io/github/license/nagyesta/lowkey-vault-docker-buildx?color=informational)](https://raw.githubusercontent.com/nagyesta/lowkey-vault-docker-buildx/main/LICENSE)
-[![Docker Hub](https://img.shields.io/docker/v/nagyesta/lowkey-vault?label=docker%20hub&logo=docker&sort=semver)](https://hub.docker.com/r/nagyesta/lowkey-vault)
+[![Docker Hub](https://img.shields.io/docker/v/nagyesta/lowkey-vault?sort=semver&arch=amd64&logo=docker&label=amd64)](https://hub.docker.com/r/nagyesta/lowkey-vault)
+[![Docker Hub](https://img.shields.io/docker/v/nagyesta/lowkey-vault?sort=date&arch=arm64&logo=docker&label=multi-arch)](https://hub.docker.com/r/nagyesta/lowkey-vault)
 [![Docker Pulls](https://img.shields.io/docker/pulls/nagyesta/lowkey-vault?logo=docker)](https://hub.docker.com/r/nagyesta/lowkey-vault)
 [![Docker build](https://img.shields.io/github/actions/workflow/status/nagyesta/lowkey-vault-docker-buildx/gradle.yml?logo=github&branch=main)](https://github.com/nagyesta/lowkey-vault-docker-buildx/actions/workflows/gradle.yml)
 [![Lowkey secure](https://img.shields.io/badge/lowkey-secure-0066CC)](https://github.com/nagyesta/lowkey-vault)
