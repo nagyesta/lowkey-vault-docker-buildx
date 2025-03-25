@@ -1,6 +1,6 @@
 [versions]
 # Warning: this file is used as build trigger, do not add anything else here!
-lowkeyVault = "2.14.6"
+lowkeyVault = "2.14.13"
 
 [libraries]
 lowkey-vault-app = { module = "com.github.nagyesta.lowkey-vault:lowkey-vault-app", version.ref = "lowkeyVault" }
