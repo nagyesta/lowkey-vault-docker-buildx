@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.15_6-jre-ubi9-minimal
+FROM eclipse-temurin:17.0.16_8-jre-ubi9-minimal
 LABEL maintainer="nagyesta@gmail.com"
 EXPOSE 8443:8443
 COPY lowkey-vault.jar /lowkey-vault.jar
