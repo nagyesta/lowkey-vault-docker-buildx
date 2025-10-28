@@ -76,9 +76,9 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -95,6 +95,20 @@ tasks.register<Copy>("copyDockerfile") {
     dependsOn(":build")
 }
 
+tasks.register<DefaultTask>("writeVersion") {
+    group = "versioning"
+    description = "Writes project version to a file."
+    outputs.file(layout.buildDirectory.file("version").get().asFile)
+    inputs.property("version", project.version)
+
+    val versionFile = file("build/version")
+    val versionText = project.version.toString()
+    doLast {
+        versionFile.writeText("v${versionText}")
+    }
+    mustRunAfter(tasks.clean)
+}
+
 tasks.register<Copy>("prepareDocker") {
     group = "Docker"
     description = "Prepares the Docker build directory."
@@ -105,7 +119,7 @@ tasks.register<Copy>("prepareDocker") {
     rename {
         "lowkey-vault.jar"
     }
-    dependsOn(":copyDockerfile")
+    dependsOn(":copyDockerfile", ":writeVersion")
 }
 
 tasks.register<Exec>("createDockerBuildx") {
@@ -130,7 +144,7 @@ tasks.register<Exec>("buildDocker") {
         "build",
         "--platform", "linux/arm64,linux/amd64",
         "--pull",
-        "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-ubi9-minimal",
+        "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-ubi10-minimal",
         "."
     )
     dependsOn(":createDockerBuildx")
@@ -146,7 +160,7 @@ tasks.register<Exec>("buildDockerPush") {
         "build",
         "--platform", "linux/arm64,linux/amd64",
         "--push",
-        "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-ubi9-minimal",
+        "-t", "nagyesta/lowkey-vault:${libs.versions.lowkeyVault.get()}-ubi10-minimal",
         "."
     )
 }
