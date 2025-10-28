@@ -1,6 +1,6 @@
-FROM eclipse-temurin:21.0.8_9-jre-ubi9-minimal
+FROM eclipse-temurin:25_36-jre-ubi10-minimal
 LABEL maintainer="nagyesta@gmail.com"
-EXPOSE 8443:8443
+EXPOSE 8080 8443
 COPY lowkey-vault.jar /lowkey-vault.jar
 RUN \
   chmod 555 "/lowkey-vault.jar" && \
